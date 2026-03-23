@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  neural_nt_backend:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./outputs:/app/outputs
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
+# Usage:
+# docker-compose up -d         # Start in background
+# docker-compose logs -f        # View logs
+# docker-compose down          # Stop
