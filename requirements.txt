@@ -1,6 +1,0 @@
-torch
-gradio
-numpy
-pandas
-scikit-learn
-matplotlib
