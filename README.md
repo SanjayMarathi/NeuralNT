@@ -98,7 +98,3 @@ Before you begin, please ensure you have the following installed on your machine
    ```
 
 ---
-
-## 📜 License
-
-This repository is licensed under the MIT License. See the native configurations for detailed distribution rights. Open-source deep-learning architectures deployed elegantly across native UI systems.
