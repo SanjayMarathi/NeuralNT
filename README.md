@@ -1,100 +1,130 @@
 # 🧠 NeuralNT
 
-NeuralNT is a high-performance cross-platform system that completely decouples Machine Learning configuration from processing hardware. By leveraging a Flutter mobile application and a cloud-based Python deployment, it allows anyone to build, train, configure, and monitor deep neural networks natively on their phone—offloading all intensive computing to a remote GPU environment (e.g., Hugging Face Spaces).
-
-## 🚀 Key Features
-
-*   **Cloud GPU Training via Mobile**: You don't need a massive rig or local CUDA environment to train PyTorch architectures. Simply interact natively with the Flutter Android/iOS app, and your tasks are streamed via SSE networks directly to the backend GPU payload.
-*   **Fully Asynchronous UI (`IndexedStack`)**: Toggle between Training and Predict tabs seamlessly. Your live server connections and real-time training progress bars remain strictly active processing in the background.
-*   **Live Log Streaming & Visual Timers**: View exact batch logs, elapsed model-fitting timestamps in real-time (`Timer.periodic`), and live gradient descent outputs cleanly compiled by the backend microservice.
-*   **Native Inference Histories**: All previously predicted outcomes and compiled `.pt` Base64 binaries are explicitly stored locally and dynamically cached via `shared_preferences` for instantaneous loading.
+NeuralNT is a high-performance cross-platform system that separates machine learning configuration from hardware execution. It enables users to build, train, configure, and monitor deep neural networks directly from a mobile device while offloading heavy computation to a cloud-based GPU backend.
 
 ---
 
-## 📂 Architecture
+## 🚀 Features
 
-NeuralNT is divided into three standalone environments inside this monorepo:
+* **Cloud GPU Training via Mobile**
+  Train neural networks without requiring local GPUs. All computations run on remote environments like Hugging Face Spaces.
 
-### 1. `neuralnt_mobile/` ✨ (Core)
-The highly-polished, Dark/Light Mode compatible native Flutter application.
-*   **Framework**: Dart / Flutter
-*   **UI Features**: Custom premium NeuralNT AI app icon (`flutter_launcher_icons`), dynamic memory routing, and hardware cancellation hooks via `StreamSubscription()`.
-*   **How to Build**:
-    ```bash
-    cd neuralnt_mobile
-    flutter clean
-    flutter pub get
-    flutter build apk --release
-    ```
-    This outputs the signed Android APK directly to `build/app/outputs/flutter-apk/app-release.apk`.
+* **Asynchronous Mobile UI**
+  Smooth navigation using `IndexedStack`, allowing background training while switching between screens.
 
-### 2. `training_service/` ☁️ (Cloud Microservice)
-The blazing fast FastAPI payload explicitly configured to deploy instantly as a Docker instance.
-*   **Framework**: Python, FastAPI, PyTorch
-*   **Capabilities**: Parses custom user network layers, synthesizes dynamic `torch.nn.Sequential` load graphs, dispatches SSE chunking streams, and encodes compiled models back into raw `Base64` files for instant mobile extraction.
-*   **How to Deploy**:
-    Navigate to your Hugging Face space, select the "Docker" framework template, and upload the entire raw contents of this folder. The native `Dockerfile` explicitly invokes `uvicorn`.
+* **Live Training Monitoring**
+  Real-time logs, timers, and training progress streamed via SSE.
 
-### 3. `web_client/` 💻 (Browser Testing UI)
-A native web testing environment utilizing Gradio components for manipulating training hyperparameter configurations cleanly across generic Desktop browsers.
-*   **Framework**: Python, Gradio
-*   **Execution**:
-    ```bash
-    cd web_client
-    python app.py
-    ```
+* **Model Storage & History**
+  Stores prediction results and trained models locally using `shared_preferences` for quick access.
 
 ---
 
-## 🛠 Integration Pipeline
+## 🏗 Architecture
 
-1. Deploy the `training_service/` folder securely as a standard Docker cluster natively inside Hugging Face Spaces.
-2. The remote backend instances automatically spin up REST API endpoints at `/health`, `/train`, and `/predict`.
-3. Build the `neuralnt_mobile/` Flutter payload entirely across local device clusters.
-4. Upload custom `.zip` or `.csv` dataset schemas natively through the mobile front-end to trigger, compile, tune, and query deeply sophisticated Neural Network outcomes seamlessly!
+The project consists of three main components:
 
-<p align="center"><i>Beautiful, scalable, robust deep-learning architectures deployed explicitly onto native user hardware.</i></p>
+### 📱 neuralnt_mobile/ (Flutter App)
+
+* Built with Flutter (Dart)
+* Provides UI for training, prediction, and monitoring
+* Supports dark/light mode and real-time updates
+
+**Build:**
+
+```bash
+cd neuralnt_mobile
+flutter clean
+flutter pub get
+flutter build apk --release
+```
+
+---
+
+### ☁️ training_service/ (Backend API)
+
+* Built with Python, FastAPI, and PyTorch
+* Handles model training and inference
+* Streams logs and returns trained models as Base64
+
+**Run Locally:**
+
+```bash
+cd training_service
+pip install -r requirements.txt
+uvicorn app:app --host 0.0.0.0 --port 7860 --reload
+```
+
+**Deployment:**
+Deploy using Docker on Hugging Face Spaces.
+
+---
+
+### 💻 web_client/ (Testing Interface)
+
+* Built using Gradio
+* Used for testing training configurations via browser
+
+**Run:**
+
+```bash
+cd web_client
+python app.py
+```
+
+---
+
+## 🔄 Workflow
+
+1. Deploy backend (`training_service`) on cloud
+2. Backend exposes APIs: `/health`, `/train`, `/predict`
+3. Mobile app connects to backend
+4. User uploads dataset and config via mobile
+5. Model is trained on GPU and logs are streamed
+6. Output model is returned and stored locally
 
 ---
 
 ## ⚙️ Prerequisites
 
-Before you begin, please ensure you have the following installed on your machine:
-- **Flutter SDK** (v3.19+ recommended) for `neuralnt_mobile/` compilation and testing.
-- **Python 3.11+** with `pip` for local `training_service/` API execution.
-- **Docker** (Optional, recommended for mimicking the production Hugging Face environment).
-- A valid **Hugging Face** account to orchestrate the backend GPU endpoints via Spaces.
+* Flutter SDK (v3.19+)
+* Python 3.11+
+* pip
+* Docker (optional)
+* Hugging Face account
 
 ---
 
-## 🏁 Quickstart Guide
+## 🏁 Quickstart
 
-### 1. Launching the Backend Service
-1. Navigate to the backend directory:
-   ```bash
-   cd training_service/
-   ```
-2. Install the necessary Python packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Boot up the local FastAPI hardware stream:
-   ```bash
-   uvicorn app:app --host 0.0.0.0 --port 7860 --reload
-   ```
+### Start Backend
 
-### 2. Bootstrapping the Mobile Client
-1. Navigate to the Flutter core library:
-   ```bash
-   cd neuralnt_mobile/
-   ```
-2. Fetch the required Dart configurations:
-   ```bash
-   flutter pub get
-   ```
-3. Test locally on an emulator or a tethered hardware device:
-   ```bash
-   flutter run
-   ```
+```bash
+cd training_service
+pip install -r requirements.txt
+uvicorn app:app --reload
+```
+
+### Run Mobile App
+
+```bash
+cd neuralnt_mobile
+flutter pub get
+flutter run
+```
 
 ---
+
+## 📌 Advantages
+
+* No need for high-end hardware
+* Fully mobile-based ML workflow
+* Scalable cloud architecture
+* Real-time monitoring
+* Easy deployment
+
+---
+
+## 📄 Conclusion
+
+NeuralNT simplifies deep learning by combining mobile accessibility with cloud computing. It allows users to train and manage neural networks efficiently without requiring powerful local systems.
